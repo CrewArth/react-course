@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginSuccess } from '../store/slices/authSlice';
+import { login } from '../utils/api';
 import './Login.css';
 
 const Login = () => {
@@ -18,30 +19,39 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://dummyjson.com/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
+      // Check for admin/admin credentials
+      if (username === 'admin' && password === 'admin') {
+        // Simulate successful login for admin
+        const mockToken = 'admin_token_' + Date.now();
         dispatch(
           loginSuccess({
-            user: data,
+            user: { username: 'admin', role: 'admin' },
+            token: mockToken,
+          })
+        );
+        navigate('/home');
+        return;
+      }
+
+      // For other credentials, try API login
+      const data = await login(username, password);
+
+      // Handle different response structures
+      // If token exists directly in response
+      if (data.token) {
+        dispatch(
+          loginSuccess({
+            user: data.user || data,
             token: data.token,
           })
         );
         navigate('/home');
       } else {
-        setError(data.message || 'Login failed. Please try again.');
+        // If response has different structure
+        setError('Invalid response from server. Token not found.');
       }
     } catch (err) {
-      setError('Network error. Please try again.');
+      setError(err.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -78,7 +88,7 @@ const Login = () => {
           </button>
         </form>
         <p className="demo-info">
-          Demo: Use any username and password from dummyjson.com
+          Default credentials: Username: <strong>admin</strong> / Password: <strong>admin</strong>
         </p>
       </div>
     </div>

@@ -53,13 +53,13 @@ const Checkout = () => {
                 <h3>{item.title}</h3>
                 <p className="item-price">${item.price}</p>
               </div>
-              <div className="quantity-controls">
+              <div className="quantity-controls text-black">
                 <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>
-                  -
+                  <span className="text-black">-</span>
                 </button>
                 <span>{item.quantity}</span>
                 <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>
-                  +
+                  <span className="text-black">+</span>
                 </button>
               </div>
               <div className="item-total">

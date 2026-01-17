@@ -1,0 +1,192 @@
+{
+  "info": {
+    "_postman_id": "537b64c4-7ead-4cf8-8834-ac38343778a5",
+    "name": "KODECREATORS-REACT-INTERVIEW",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29802500",
+    "_collection_link": "https://go.postman.co/collection/29802500-537b64c4-7ead-4cf8-8834-ac38343778a5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "LIST (PRODUCTS)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/products/list?page=1&per_page=10",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "products",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "per_page",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CREATE (PRODUCTS)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "title",
+              "value": "test product-123",
+              "description": "requried",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "test description, description can be long so keep in mind while designing",
+              "description": "requried",
+              "type": "text"
+            },
+            {
+              "key": "price",
+              "value": "120",
+              "description": "not required => optional (no need to pass this value)",
+              "type": "text"
+            },
+            {
+              "key": "images[0]",
+              "description": "array , file  , |mimetypes:image/* => has to be image",
+              "type": "file",
+              "fileNotInWorkingDirectoryWarning": "This file isn't in your working directory. Teammates you share this request with won't be able to use this file. To make collaboration easier you can setup your working directory in Settings.",
+              "filesNotInWorkingDirectory": [
+                "/home/kode/test/test.png"
+              ],
+              "src": "/home/kode/test/test.png"
+            },
+            {
+              "key": "images[1]",
+              "description": "array , file  , |mimetypes:image/* => has to be image",
+              "type": "file",
+              "value": null,
+              "disabled": true
+            },
+            {
+              "key": "images[2]",
+              "description": "array , file  , |mimetypes:image/* => has to be image",
+              "type": "file",
+              "value": null,
+              "disabled": true
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{url}}/products/create",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "products",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "EDIT (PRODUCTS)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "title",
+              "value": "test product edited",
+              "description": "requried",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "test description, description can be long so keep in mind while designing",
+              "description": "requried",
+              "type": "text"
+            },
+            {
+              "key": "price",
+              "value": "120",
+              "description": "not required => optional (no need to pass this value)",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{url}}/products/67/edit",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "products",
+            "67",
+            "edit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE (PRODUCT)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/products/64/delete",
+          "host": [
+            "{{url}}"
+          ],
+          "path": [
+            "products",
+            "64",
+            "delete"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "url",
+      "value": "https://interview-api.kodecreators.com/api",
+      "type": "string"
+    }
+  ]
+}

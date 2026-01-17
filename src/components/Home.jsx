@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
+import { listProducts } from '../utils/api';
 import './Home.css';
 
 const Home = () => {
@@ -10,46 +11,51 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const productsPerPage = 12;
+  const [totalPages, setTotalPages] = useState(1);
+  const productsPerPage = 10;
 
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.items);
 
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
+    fetchProducts(currentPage);
+  }, [currentPage]);
 
   useEffect(() => {
     filterProducts();
   }, [selectedCategory, products]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 1) => {
     try {
-      const response = await fetch('https://dummyjson.com/products?limit=100');
-      const data = await response.json();
-      setProducts(data.products);
-      setFilteredProducts(data.products);
+      setLoading(true);
+      const data = await listProducts(page, productsPerPage);
+      
+      // Handle different response structures
+      // If data has a products array, use it; otherwise assume data is the array
+      const productsList = Array.isArray(data) ? data : (data.products || data.data || []);
+      
+      setProducts(productsList);
+      setFilteredProducts(productsList);
+      
+      // Extract categories from products if available
+      if (productsList.length > 0) {
+        const uniqueCategories = [...new Set(productsList.map(p => p.category).filter(Boolean))];
+        setCategories(uniqueCategories);
+      }
+      
+      // Handle pagination if API returns pagination info
+      if (data.total_pages || data.totalPages) {
+        setTotalPages(data.total_pages || data.totalPages);
+      } else if (data.total && data.per_page) {
+        setTotalPages(Math.ceil(data.total / data.per_page));
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Error fetching products:', error);
       setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('https://dummyjson.com/products/categories');
-      const data = await response.json();
-      // Ensure we have an array of strings
-      if (Array.isArray(data)) {
-        setCategories(data);
-      } else {
-        setCategories([]);
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      setCategories([]);
+      setProducts([]);
+      setFilteredProducts([]);
     }
   };
 
@@ -62,20 +68,17 @@ const Home = () => {
       );
       setFilteredProducts(filtered);
     }
-    setCurrentPage(1);
+    // Note: We filter client-side on the current page's products
+    // If you need to filter across all products, you'd need to fetch all pages
+    // or have the API support category filtering
   };
 
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  // Use filtered products directly since API handles pagination
+  const currentProducts = filteredProducts;
 
   if (loading) {
     return <div className="loading">Loading products...</div>;
@@ -104,32 +107,39 @@ const Home = () => {
       </div>
 
       <div className="products-grid">
-        {currentProducts.map((product) => (
-          <div key={product.id} className="product-card">
-            <img src={product.thumbnail} alt={product.title} />
-            <h3>{product.title}</h3>
-            <p className="price">${product.price}</p>
-            <p className="description">{product.description}</p>
-            <button onClick={() => handleAddToCart(product)}>
-              Add to Cart
-            </button>
-          </div>
-        ))}
+        {currentProducts.length > 0 ? (
+          currentProducts.map((product) => (
+            <div key={product.id} className="product-card">
+              <img 
+                src={product.thumbnail || product.image || product.images?.[0] || '/logo192.png'} 
+                alt={product.title} 
+              />
+              <h3>{product.title}</h3>
+              <p className="price">${product.price || 'N/A'}</p>
+              <p className="description">{product.description || ''}</p>
+              <button onClick={() => handleAddToCart(product)}>
+                Add to Cart
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="no-products">No products found</div>
+        )}
       </div>
 
       <div className="pagination">
         <button
           onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || loading}
         >
           Previous
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          Page {currentPage} of {totalPages || 1}
         </span>
         <button
           onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages || loading}
         >
           Next
         </button>

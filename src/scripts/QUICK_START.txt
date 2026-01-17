@@ -1,0 +1,49 @@
+================================================================================
+ENROLLMENT BYPASS SCRIPT - QUICK START GUIDE
+================================================================================
+
+STEP 1: Open Registration Page
+   URL: https://vadodaraliteraturefestival.in/registration/
+   Press F12 to open Developer Tools
+   Go to Console tab
+
+STEP 2: Copy & Paste Script
+   Open: enrollmentBypass-console.js
+   Copy ENTIRE content
+   Paste into browser console
+   Press Enter
+
+STEP 3: Fill Form
+   Registration Type: PU Attendee
+   Enrollment ID: 210510312010
+   Name: ARTH MAHENDRABHAI VALA
+   Institute: Parul Institute Of Computer Application
+   Mail ID: arthvala@gmail.com
+   Whatsapp: 9913414224
+
+STEP 4: Submit Form
+   Click submit/check button
+   Should see: "✅ Bypassing enrollment check" in console
+   Form should proceed successfully
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If not working:
+1. Check console for errors (red messages)
+2. Verify script executed (should see success message)
+3. Check Network tab → filter "check_enrollment" → verify response
+4. Try refreshing page and reloading script
+5. Make sure script runs BEFORE form submission
+
+================================================================================
+FILES
+================================================================================
+
+- enrollmentBypass-console.js  → Simple version (recommended for quick use)
+- enrollmentBypass.js          → Full-featured version with controls
+- README.md                     → Detailed documentation
+
+================================================================================
+
